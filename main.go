@@ -13,7 +13,7 @@ func addToMealList(meal_list *tview.List, key string, increase bool) {
 	if len(search) == 0 && increase {
 		var calories float32 = float32(foods[key].Calories) / float32(100)
 		foods[key].Grams = 1
-		meal_list.AddItem(key+"- 1g", fmt.Sprintf("%.1f Calories", calories), 0, nil)
+		meal_list.AddItem(key+" - 1g", fmt.Sprintf("%.1f Calories", calories), 0, nil)
 	} else if len(search) == 1 {
 		quantity := foods[key].Grams
 		if increase {
@@ -27,7 +27,7 @@ func addToMealList(meal_list *tview.List, key string, increase bool) {
 		} else if quantity >= 1 {
 			foods[key].Grams = quantity
 			var calories float32 = (float32(foods[key].Calories) / float32(100)) * float32(quantity)
-			meal_list.SetItemText(search[0], key+fmt.Sprintf("- %dg", quantity), fmt.Sprintf("%.1f Calories", calories))
+			meal_list.SetItemText(search[0], key+fmt.Sprintf(" - %dg", quantity), fmt.Sprintf("%.1f Calories", calories))
 		}
 	}
 }
@@ -36,7 +36,7 @@ func updateMealDescription(meal_list *tview.List, description *tview.TextView) {
 	var totalCalories float32 = 0.0
 	for i := 0; i < meal_list.GetItemCount(); i++ {
 		itemText, _ := meal_list.GetItemText(i)
-		item := strings.Split(itemText, "-")[0]
+		item := strings.Split(itemText, " -")[0]
 		totalCalories += (float32(foods[item].Calories) / float32(100)) * float32(foods[item].Grams)
 	}
 	description.SetText(fmt.Sprintf("Total Calories for meal: %.1f", totalCalories))
