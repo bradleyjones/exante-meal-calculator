@@ -34,18 +34,22 @@ func addToMealList(meal_list *tview.List, key string, increase bool) {
 
 func updateMealDescription(meal_list *tview.List, description *tview.TextView) {
 	var totalCalories float32 = 0.0
+	var totalCarbs float32 = 0.0
+	var totalGoal float32 = 200.00
 	for i := 0; i < meal_list.GetItemCount(); i++ {
 		itemText, _ := meal_list.GetItemText(i)
 		item := strings.Split(itemText, " -")[0]
 		totalCalories += (float32(foods[item].Calories) / float32(100)) * float32(foods[item].Grams)
+		totalCarbs += (float32(foods[item].Carbs) / float32(100)) * float32(foods[item].Grams)
 	}
-	description.SetText(fmt.Sprintf("Total Calories for meal: %.1f", totalCalories))
+	description.SetText(fmt.Sprintf("Total Calories for meal: %.1f \n\n%.1f Calories remaining to make a %.0f Calorie meal \n\nTotal Carbs for meal: %.1f", totalCalories, totalGoal-totalCalories, totalGoal, totalCarbs))
 }
 
 func main() {
 	app := tview.NewApplication()
 
-	meal_list := tview.NewList()
+	meal_list := tview.NewList().
+		SetSelectedFocusOnly(true)
 	meal_description := tview.NewTextView()
 	food_list := tview.NewList()
 	food_list.SetSelectedFunc(func(i int, k, v string, x rune) {
@@ -67,11 +71,7 @@ func main() {
 		AddItem(meal_description, 1, 1, 1, 1, 0, 0, false)
 
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyCtrlN {
-			app.SetFocus(meal_list)
-		} else if event.Key() == tcell.KeyCtrlP {
-			app.SetFocus(food_list)
-		} else if event.Key() == tcell.KeyBackspace2 {
+		if event.Key() == tcell.KeyBackspace2 {
 			k, _ := food_list.GetItemText(food_list.GetCurrentItem())
 			addToMealList(meal_list, k, false)
 			updateMealDescription(meal_list, meal_description)
